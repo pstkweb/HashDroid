@@ -5,6 +5,22 @@ import android.os.Bundle;
 import android.app.Activity;
 
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+import io.oauth.OAuth;
+import io.oauth.OAuthCallback;
+import io.oauth.OAuthData;
+import io.oauth.OAuthRequest;
 
 
 /**
@@ -47,6 +63,62 @@ public class HashtagDetailActivity extends Activity {
                     .add(R.id.hashtag_detail_container, fragment)
                     .commit();
         }
+
+        final OAuth oauth = new OAuth(HashtagDetailActivity.this);
+        oauth.initialize("xVJYDt7zdriZhhaaBhp1bkYM4vo");
+
+        oauth.popup("twitter", new OAuthCallback() {
+            @Override
+            public void onFinished(OAuthData data) {
+                data.http("/1.1/search/tweets.json?q=HeroesOfTheStorm", new OAuthRequest() {
+                    private URL url;
+                    private URLConnection con;
+
+                    @Override
+                    public void onSetURL(String s) {
+                        try {
+                            url = new URL(s);
+                            con = url.openConnection();
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onSetHeader(String s, String s2) {
+                        con.addRequestProperty(s, s2);
+                    }
+
+                    @Override
+                    public void onReady() {
+                        try {
+                            BufferedReader r = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                            StringBuilder total = new StringBuilder();
+                            String line;
+
+                            while ((line = r.readLine()) != null) {
+                                total.append(line);
+                            }
+
+                            JSONObject res = new JSONObject(total.toString());
+                            Toast.makeText(getApplicationContext(), res.getJSONArray("statuses").getJSONObject(0).getString("id"), Toast.LENGTH_LONG).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(getApplicationContext(), "Err : " + message, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
     }
 
     @Override
