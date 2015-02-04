@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
+
 
 /**
  * An activity representing a list of Hashtags. This activity
@@ -23,6 +27,11 @@ import android.app.Activity;
  */
 public class HashtagListActivity extends Activity
         implements HashtagListFragment.Callbacks {
+    public final static String CONSUMER_TOKEN = "LqZyju1qEpQMVrUvhPkdhU22Z";
+    public final static String CONSUMER_SECRET = "aA2JoF0mqY0rUymnVt4omSuom919CjI4SR7mvjIFze6b1Q0LsS";
+
+    public final static String USER_TOKEN = "596818956-T9EdTMkjzN4PPN4vg2KQbJCO4B1mLS2u3kx5l3Bk";
+    public final static String USER_SECRET = "LugwQ5dRqZYgG0yHHwjVUvzfW4tKcceHDoskt2T4pmC0l";
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -50,6 +59,14 @@ public class HashtagListActivity extends Activity
         }
 
         // TODO: If exposing deep links into your app, handle intents here.
+        Twitter tw = TwitterFactory.getSingleton();
+        // App token
+        tw = TwitterFactory.getSingleton();
+        tw.setOAuthConsumer(CONSUMER_TOKEN, CONSUMER_SECRET);
+
+        // User token
+        AccessToken userToken = new AccessToken(USER_TOKEN, USER_SECRET);
+        tw.setOAuthAccessToken(userToken);
     }
 
     /**
