@@ -26,5 +26,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('libs/Oauth.jar')
     compile 'com.android.support:support-v4:21.0.3'
 }
