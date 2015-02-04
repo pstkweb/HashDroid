@@ -31,7 +31,6 @@ public class AddHashTagDialogFragment extends DialogFragment
             .setPositiveButton(R.string.add_hashtag, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    // TODO: add the hashtag
                     EditText hashtagField = (EditText) view.findViewById(R.id.hashtag);
                     HashTag hashTag = new HashTag(hashtagField.getText().toString(), new Date());
                     HashtagListFragment fragment = (HashtagListFragment) getTargetFragment();

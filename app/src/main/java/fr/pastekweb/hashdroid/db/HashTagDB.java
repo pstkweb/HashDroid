@@ -101,14 +101,15 @@ public class HashTagDB
     public HashTag retrieve(int id)
     {
         String[] columns = new String[] {COL_ID, COL_LIBELLE, COL_CREATED};
-        String where = COL_ID + " = \"%?%\"";
+        String where = COL_ID + " = ?";
         String whereArgs[] = {Integer.toString(id)};
         String order = COL_CREATED + " desc";
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         Cursor cursor = db.query(DB_TABLE, columns, where, whereArgs, null, null, order);
 
-        String libelle = cursor.getString(cursor.getColumnIndex(COL_LIBELLE));
-        Date created = parseDate(cursor.getString(cursor.getColumnIndex(COL_CREATED)));
+        cursor.moveToFirst();
+        String libelle = cursor.getString(1);
+        Date created = parseDate(cursor.getString(2));
         HashTag hashTag = new HashTag(id, libelle, created);
 
         String query = "SELECT * FROM "+DB_TABLE_TWT_HT+" twht"
@@ -144,7 +145,6 @@ public class HashTagDB
 
         if (cursor.moveToFirst()) {
             do {
-                Log.d("DBDebug", "Changed");
                 int id = cursor.getInt(0);
                 String libelle = cursor.getString(1);
                 Date created = parseDate(cursor.getString(2));

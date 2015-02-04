@@ -2,13 +2,16 @@ package fr.pastekweb.hashdroid;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import fr.pastekweb.hashdroid.db.HashTagDB;
 import fr.pastekweb.hashdroid.dummy.DummyContent;
+import fr.pastekweb.hashdroid.model.HashTag;
 
 /**
  * A fragment representing a single Hashtag detail screen.
@@ -26,7 +29,7 @@ public class HashtagDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private HashTag hashTag;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,10 +43,9 @@ public class HashtagDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            int htID = getArguments().getInt(ARG_ITEM_ID);
+            HashTagDB htdb = new HashTagDB(getActivity().getApplicationContext());
+            hashTag = htdb.retrieve(htID);
         }
     }
 
@@ -53,8 +55,8 @@ public class HashtagDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_hashtag_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.hashtag_detail)).setText(mItem.content);
+        if (hashTag != null) {
+            ((TextView) rootView.findViewById(R.id.hashtag_detail)).setText(hashTag.toString());
         }
 
         return rootView;
