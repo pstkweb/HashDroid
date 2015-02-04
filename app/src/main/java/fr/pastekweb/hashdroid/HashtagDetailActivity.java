@@ -4,10 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
-import android.util.Log;
 import android.view.MenuItem;
-
-import twitter4j.QueryResult;
 
 
 /**

@@ -2,10 +2,8 @@ package fr.pastekweb.hashdroid;
 
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.ListFragment;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,12 +11,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-
-import java.util.ArrayList;
-
 import fr.pastekweb.hashdroid.db.HashTagDB;
 import fr.pastekweb.hashdroid.dialog.AddHashTagDialogFragment;
-import fr.pastekweb.hashdroid.dummy.DummyContent;
 import fr.pastekweb.hashdroid.model.HashTag;
 
 /**

@@ -6,8 +6,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
-import fr.pastekweb.hashdroid.model.HashTag;
-
 /**
  * Created by antoine on 30/01/2015.
  */

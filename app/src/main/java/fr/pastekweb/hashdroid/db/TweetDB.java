@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.List;
 
 import fr.pastekweb.hashdroid.model.Tweet;
 
@@ -69,6 +68,7 @@ public class TweetDB
 
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         db.insert(DB_TABLE, null, values);
+        db.close();
     }
 
     /**
@@ -88,6 +88,8 @@ public class TweetDB
         String author = cursor.getString(1);
         String text = cursor.getString(2);
         Date created = Date.valueOf(cursor.getString(3));
+
+        db.close();
         return new Tweet(id, author, text, created);
     }
 }

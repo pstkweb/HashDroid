@@ -4,13 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import fr.pastekweb.hashdroid.model.HashTag;
 import fr.pastekweb.hashdroid.model.Tweet;
@@ -91,6 +89,7 @@ public class HashTagDB
             values.put(COL_HASHTAG_ID, hashTag.getId());
             db.insert(DB_TABLE_TWT_HT, null, values);
         }
+        db.close();
     }
 
     /**
@@ -125,7 +124,7 @@ public class HashTagDB
 
             cursor.moveToNext();
         }
-
+        db.close();
         return hashTag;
     }
 
@@ -152,6 +151,7 @@ public class HashTagDB
                 hashTags.add(new HashTag(id, libelle, created));
             } while(cursor.moveToNext());
         }
+        db.close();
         return hashTags;
     }
 
@@ -166,6 +166,7 @@ public class HashTagDB
 
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         db.delete(DB_TABLE_TWT_HT, where, whereArgs);
+        db.close();
     }
 
     private Date parseDate(String textDate)

@@ -2,16 +2,17 @@ package fr.pastekweb.hashdroid;
 
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Date;
 
 import fr.pastekweb.hashdroid.db.HashTagDB;
-import fr.pastekweb.hashdroid.dummy.DummyContent;
 import fr.pastekweb.hashdroid.model.HashTag;
+import fr.pastekweb.hashdroid.model.Tweet;
 
 /**
  * A fragment representing a single Hashtag detail screen.
@@ -54,9 +55,25 @@ public class HashtagDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_hashtag_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
         if (hashTag != null) {
             ((TextView) rootView.findViewById(R.id.hashtag_detail)).setText(hashTag.toString());
+
+            Tweet tw1 = new Tweet(143, "@AntoineLelaisant", "Tweet test #dnr2i", new Date());
+            Tweet tw2 = new Tweet(1441, "@DJo", "Tweet from la fdw ! #dnr2i", new Date());
+            Tweet tw3 = new Tweet(1441, "@MrMojo", "Ça c'est le mojo ! #M", new Date());
+            hashTag.addTweet(tw1);
+            hashTag.addTweet(tw2);
+            hashTag.addTweet(tw3);
+
+            ViewGroup tweetsContainer = ((LinearLayout) rootView.findViewById(R.id.tweets_container));
+            for (Tweet tweet : hashTag.getTweets()) {
+                View tweetView = inflater.inflate(R.layout.fragment_tweet_detail, tweetsContainer, false);
+                ((TextView) tweetView.findViewById(R.id.tweet_author)).setText(tweet.getAuthor());
+                ((TextView) tweetView.findViewById(R.id.tweet_text)).setText(tweet.getText());
+                ((TextView) tweetView.findViewById(R.id.tweet_date)).setText(tweet.getCreated().toString());
+                tweetView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                tweetsContainer.addView(tweetView);
+            }
         }
 
         return rootView;
