@@ -1,14 +1,25 @@
 package fr.pastekweb.hashdroid;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.ListFragment;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
+import java.util.ArrayList;
+
+import fr.pastekweb.hashdroid.db.HashTagDB;
+import fr.pastekweb.hashdroid.dialog.AddHashTagDialogFragment;
 import fr.pastekweb.hashdroid.dummy.DummyContent;
+import fr.pastekweb.hashdroid.model.HashTag;
 
 /**
  * A list fragment representing a list of Hashtags. This fragment
@@ -37,6 +48,9 @@ public class HashtagListFragment extends ListFragment {
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+
+    private ArrayAdapter<HashTag> hashTagsAdapter;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -70,13 +84,29 @@ public class HashtagListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
+        HashTagDB hdb = new HashTagDB(getActivity().getApplicationContext());
+        hashTagsAdapter = new ArrayAdapter<HashTag>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                DummyContent.ITEMS));
+                hdb.retrieveAll()
+        );
+
+        setListAdapter(hashTagsAdapter);
+    }
+
+    /**
+     * Add a hashtag to the list
+     * @param hashTag
+     */
+    public void addHashTag(HashTag hashTag)
+    {
+        HashTagDB hashTagDB = new HashTagDB(getActivity().getApplicationContext());
+        hashTagDB.create(hashTag);
+        hashTagsAdapter.add(hashTag);
+        hashTagsAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -91,6 +121,29 @@ public class HashtagListFragment extends ListFragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        inflater.inflate(R.menu.list_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.add_hashtag:
+                FragmentManager fm = getFragmentManager();
+                AddHashTagDialogFragment addDialog = new AddHashTagDialogFragment();
+                addDialog.setTargetFragment(this, getTargetRequestCode());
+                addDialog.show(fm, "Add_hashtag");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+        @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 

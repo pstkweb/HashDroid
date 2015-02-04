@@ -3,6 +3,15 @@ package fr.pastekweb.hashdroid;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.view.Menu;
+import android.view.MenuInflater;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import fr.pastekweb.hashdroid.db.HashDroidDBOpenHelper;
+import fr.pastekweb.hashdroid.db.HashTagDB;
+import fr.pastekweb.hashdroid.model.HashTag;
 
 
 /**
@@ -33,6 +42,7 @@ public class HashtagListActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_hashtag_list);
 
         if (findViewById(R.id.hashtag_detail_container) != null) {

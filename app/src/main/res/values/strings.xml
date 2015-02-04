@@ -3,5 +3,8 @@
 
     <string name="app_name">HashDroid</string>
     <string name="title_hashtag_detail">Hashtag Detail</string>
+    <string name="cancel">Annuler</string>
+    <string name="hashtag">Hashtag</string>
+    <string name="add_hashtag">Ajouter un HashTag</string>
 
 </resources>
