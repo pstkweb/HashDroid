@@ -3,17 +3,9 @@ package fr.pastekweb.hashdroid;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
-import android.view.Menu;
-import android.view.MenuInflater;
-
-import java.util.ArrayList;
-import java.util.Date;
-
-import fr.pastekweb.hashdroid.db.HashDroidDBOpenHelper;
-import fr.pastekweb.hashdroid.db.HashTagDB;
-import fr.pastekweb.hashdroid.model.HashTag;
 
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 
@@ -48,6 +40,18 @@ public class HashtagListActivity extends Activity
      */
     private boolean mTwoPane;
 
+    public HashtagListActivity() {
+        // App token
+        Twitter tw = TwitterFactory.getSingleton();
+        try {
+            tw.setOAuthConsumer(CONSUMER_TOKEN, CONSUMER_SECRET);
+        } catch (IllegalStateException ex) { }
+
+        // User token
+        AccessToken userToken = new AccessToken(USER_TOKEN, USER_SECRET);
+        tw.setOAuthAccessToken(userToken);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,14 +73,6 @@ public class HashtagListActivity extends Activity
         }
 
         // TODO: If exposing deep links into your app, handle intents here.
-        Twitter tw = TwitterFactory.getSingleton();
-        // App token
-        tw = TwitterFactory.getSingleton();
-        tw.setOAuthConsumer(CONSUMER_TOKEN, CONSUMER_SECRET);
-
-        // User token
-        AccessToken userToken = new AccessToken(USER_TOKEN, USER_SECRET);
-        tw.setOAuthAccessToken(userToken);
     }
 
     /**
