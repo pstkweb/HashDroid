@@ -58,13 +58,6 @@ public class HashtagDetailFragment extends Fragment {
         if (hashTag != null) {
             ((TextView) rootView.findViewById(R.id.hashtag_detail)).setText(hashTag.toString());
 
-            Tweet tw1 = new Tweet(143, "@AntoineLelaisant", "Tweet test #dnr2i", new Date());
-            Tweet tw2 = new Tweet(1441, "@DJo", "Tweet from la fdw ! #dnr2i", new Date());
-            Tweet tw3 = new Tweet(1441, "@MrMojo", "Ça c'est le mojo ! #M", new Date());
-            hashTag.addTweet(tw1);
-            hashTag.addTweet(tw2);
-            hashTag.addTweet(tw3);
-
             ViewGroup tweetsContainer = ((LinearLayout) rootView.findViewById(R.id.tweets_container));
             for (Tweet tweet : hashTag.getTweets()) {
                 View tweetView = inflater.inflate(R.layout.fragment_tweet_detail, tweetsContainer, false);

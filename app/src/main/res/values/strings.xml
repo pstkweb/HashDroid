@@ -6,5 +6,8 @@
     <string name="cancel">Annuler</string>
     <string name="hashtag">Hashtag</string>
     <string name="add_hashtag">Ajouter un HashTag</string>
+    <string name="ask_refresh">Mettre à jour la liste des derniers tweets?</string>
+    <string name="refresh">Rafraichir</string>
+    <string name="refresh_title">Mettre à jour</string>
 
 </resources>

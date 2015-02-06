@@ -19,12 +19,9 @@ import fr.pastekweb.hashdroid.model.Tweet;
 public class HashTagDB
 {
     public static final String DB_TABLE = "hd_hashtag";
-    public static final String DB_TABLE_TWT_HT = "hd_twt_ht";
     public static final String COL_ID = "id";
     public static final String COL_LIBELLE = "libelle";
     public static final String COL_CREATED = "created";
-    public static final String COL_HASHTAG_ID = "hashtag_id";
-    public static final String COL_TWEET_ID = "tweet_id";
 
 
     private HashDroidDBOpenHelper dbOpenHelper;
@@ -47,11 +44,13 @@ public class HashTagDB
     public static ArrayList<String> getCreateTablesQueries()
     {
         ArrayList<String> queries = new ArrayList<>();
-        queries.add("CREATE TABLE "+DB_TABLE+" ("+COL_ID+" int PRIMARY KEY, "+COL_LIBELLE+" varchar(100), "+COL_CREATED+" TEXT);");
-        queries.add("CREATE TABLE "+DB_TABLE_TWT_HT+" ("+COL_HASHTAG_ID+" int, "+COL_TWEET_ID+" int," +
-                " PRIMARY KEY ("+COL_HASHTAG_ID+", "+COL_TWEET_ID+")" +
-                " FOREIGN KEY ("+COL_HASHTAG_ID+") REFERENCES "+DB_TABLE+"("+COL_ID+") ON DELETE CASCADE" +
-                " FOREIGN KEY ("+COL_TWEET_ID+") REFERENCES "+TweetDB.DB_TABLE+"("+TweetDB.COL_ID+") ON DELETE CASCADE);");
+        queries.add(
+            "CREATE TABLE "+DB_TABLE+" ("+
+                COL_ID+" int PRIMARY KEY, "+
+                COL_LIBELLE+" varchar(100), "+
+                COL_CREATED+" TEXT);"
+        );
+
         return queries;
     }
 
@@ -62,8 +61,8 @@ public class HashTagDB
     public static ArrayList<String> getDropTablesQueries()
     {
         ArrayList<String> queries = new ArrayList<>();
-        queries.add("DROP TABLE IF EXISTS "+DB_TABLE_TWT_HT+";");
-        queries.add("DROP TABLE IF EXISTS"+DB_TABLE);
+        queries.add("DROP TABLE IF EXISTS "+DB_TABLE);
+
         return queries;
     }
 
@@ -84,10 +83,6 @@ public class HashTagDB
         TweetDB tweetDB = new TweetDB(context);
         for (Tweet tweet : hashTag.getTweets()) {
             tweetDB.create(tweet);
-            values = new ContentValues();
-            values.put(COL_TWEET_ID, tweet.getId());
-            values.put(COL_HASHTAG_ID, hashTag.getId());
-            db.insert(DB_TABLE_TWT_HT, null, values);
         }
         db.close();
     }
@@ -111,16 +106,15 @@ public class HashTagDB
         Date created = parseDate(cursor.getString(2));
         HashTag hashTag = new HashTag(id, libelle, created);
 
-        String query = "SELECT * FROM "+DB_TABLE_TWT_HT+" twht"
-                     +" INNER JOIN "+TweetDB.DB_TABLE+" tw ON twht."+COL_TWEET_ID+"=tw."+TweetDB.COL_ID
-                     +" WHERE twht."+COL_HASHTAG_ID+"=?";
+        String query = "SELECT * FROM "+TweetDB.DB_TABLE+" WHERE "+TweetDB.COL_HASHTAG_ID+"=?";
         cursor = db.rawQuery(query, whereArgs);
+        cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             long tid = cursor.getLong(0);
             String a = cursor.getString(1);
             String t = cursor.getString(2);
-            Date c = parseDate(cursor.getString(2));
-            hashTag.addTweet(new Tweet(tid, a, t, c));
+            Date c = parseDate(cursor.getString(3));
+            hashTag.addTweet(new Tweet(tid, a, t, c, hashTag));
 
             cursor.moveToNext();
         }
@@ -147,7 +141,6 @@ public class HashTagDB
                 int id = cursor.getInt(0);
                 String libelle = cursor.getString(1);
                 Date created = parseDate(cursor.getString(2));
-                //Date created = new Date();
                 hashTags.add(new HashTag(id, libelle, created));
             } while(cursor.moveToNext());
         }
@@ -161,11 +154,11 @@ public class HashTagDB
      */
     public void emptyTweets(HashTag hashtag)
     {
-        String where = COL_HASHTAG_ID+"=?";
+        String where = TweetDB.COL_HASHTAG_ID+"=?";
         String whereArgs[] = {String.valueOf(hashtag.getId())};
 
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-        db.delete(DB_TABLE_TWT_HT, where, whereArgs);
+        db.delete(TweetDB.DB_TABLE, where, whereArgs);
         db.close();
     }
 

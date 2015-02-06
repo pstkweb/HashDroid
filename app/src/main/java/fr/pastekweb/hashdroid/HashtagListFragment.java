@@ -2,6 +2,9 @@ package fr.pastekweb.hashdroid;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.view.Menu;
@@ -14,6 +17,7 @@ import android.widget.ListView;
 import fr.pastekweb.hashdroid.db.HashTagDB;
 import fr.pastekweb.hashdroid.dialog.AddHashTagDialogFragment;
 import fr.pastekweb.hashdroid.model.HashTag;
+import fr.pastekweb.hashdroid.tasks.SearchTweets;
 
 /**
  * A list fragment representing a list of Hashtags. This fragment
@@ -100,6 +104,13 @@ public class HashtagListFragment extends ListFragment {
     {
         HashTagDB hashTagDB = new HashTagDB(getActivity().getApplicationContext());
         hashTagDB.create(hashTag);
+
+        // Search for that hashtag tweets with Twitter API if network connection is up
+        if (isNetworkAvailable()) {
+            SearchTweets api = new SearchTweets(getActivity().getApplicationContext());
+            api.execute(hashTag);
+        }
+
         hashTagsAdapter.add(hashTag);
         hashTagsAdapter.notifyDataSetChanged();
     }
@@ -196,5 +207,16 @@ public class HashtagListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    /**
+     * Detect whether an internet connection exists
+     * @return True if the connection is possible
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

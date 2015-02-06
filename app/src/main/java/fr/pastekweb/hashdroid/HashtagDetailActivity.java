@@ -1,10 +1,19 @@
 package fr.pastekweb.hashdroid;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
 
 import android.view.MenuItem;
+
+import java.util.Date;
+
+import fr.pastekweb.hashdroid.db.HashTagDB;
+import fr.pastekweb.hashdroid.dialog.AskRefreshDialogFragment;
+import fr.pastekweb.hashdroid.model.HashTag;
 
 
 /**
@@ -17,6 +26,7 @@ import android.view.MenuItem;
  * more than a {@link HashtagDetailFragment}.
  */
 public class HashtagDetailActivity extends Activity {
+    public static final long REFRESH_TIME = 180000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +35,9 @@ public class HashtagDetailActivity extends Activity {
 
         // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Selected hashtag id
+        int hashID = getIntent().getIntExtra(HashtagDetailFragment.ARG_ITEM_ID, 0);
 
         // savedInstanceState is non-null when there is fragment state
         // saved from previous configurations of this activity
@@ -39,8 +52,7 @@ public class HashtagDetailActivity extends Activity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putInt(HashtagDetailFragment.ARG_ITEM_ID,
-                    getIntent().getIntExtra(HashtagDetailFragment.ARG_ITEM_ID, 0));
+            arguments.putInt(HashtagDetailFragment.ARG_ITEM_ID, hashID);
             HashtagDetailFragment fragment = new HashtagDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -48,9 +60,25 @@ public class HashtagDetailActivity extends Activity {
                     .commit();
         }
 
-        // Search for a hashtag
-        SearchTweets api = new SearchTweets();
-        api.execute("HeroesOfTheStorm");
+        // If there's internet connection and tweets are too old
+        HashTagDB hashTagDbHandler = new HashTagDB(getApplicationContext());
+        HashTag hashTag = hashTagDbHandler.retrieve(hashID);
+
+        long lastUpdate = REFRESH_TIME + 1;
+        if (hashTag.getTweets().size() > 0) {
+            lastUpdate = new Date().getTime() - hashTag.getTweets().get(0).getCreated().getTime();
+        }
+
+        if (isNetworkAvailable() && lastUpdate > REFRESH_TIME) {
+            AskRefreshDialogFragment dialog = new AskRefreshDialogFragment();
+
+            Bundle args = new Bundle();
+            args.putInt(HashtagDetailFragment.ARG_ITEM_ID, hashID);
+            dialog.setArguments(args);
+
+            dialog.show(getFragmentManager(), "AskRefresh");
+        }
+
     }
 
     @Override
@@ -67,5 +95,16 @@ public class HashtagDetailActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Detect whether an internet connection exists
+     * @return True if the connection is possible
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

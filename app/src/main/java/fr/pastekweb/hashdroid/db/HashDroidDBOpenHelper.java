@@ -19,7 +19,7 @@ public class HashDroidDBOpenHelper extends SQLiteOpenHelper
     static
     {
         DB_NAME = "hashdroid_dev";
-        DB_VERSION = 1;
+        DB_VERSION = 2;
         DB_CREATE = new ArrayList<>();
         DB_CREATE.addAll(TweetDB.getCreateTablesQueries());
         DB_CREATE.addAll(HashTagDB.getCreateTablesQueries());

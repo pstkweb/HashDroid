@@ -105,6 +105,11 @@ public class HashTag
         this.tweets.add(tweet);
     }
 
+    /**
+     * Empty the List of Tweets
+     */
+    public void emptyTweets() { this.tweets = new ArrayList<>(); }
+
     @Override
     public String toString(){ return "#"+libelle; }
 }
