@@ -35,6 +35,9 @@ public class AskRefreshDialogFragment extends DialogFragment {
                     // Search for that hashtag tweets with Twitter API
                     SearchTweets api = new SearchTweets(getActivity().getApplicationContext());
                     api.execute(ht);
+
+                    HashtagDetailFragment fragment = (HashtagDetailFragment) getTargetFragment();
+                    fragment.refreshTweetsView();
                 }
             })
             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

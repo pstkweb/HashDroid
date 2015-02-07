@@ -55,7 +55,6 @@ public class HashtagListActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_hashtag_list);
 
         if (findViewById(R.id.hashtag_detail_container) != null) {
@@ -80,7 +79,6 @@ public class HashtagListActivity extends Activity
      * indicating that the item with the given ID was selected.
      */
     public void onItemSelected(int id) {
-        Log.d("DebugLog", "Hashtag id: "+id);
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a

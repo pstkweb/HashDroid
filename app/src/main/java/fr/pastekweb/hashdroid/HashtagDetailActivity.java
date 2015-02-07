@@ -26,7 +26,6 @@ import fr.pastekweb.hashdroid.model.HashTag;
  * more than a {@link HashtagDetailFragment}.
  */
 public class HashtagDetailActivity extends Activity {
-    public static final long REFRESH_TIME = 180000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,26 +58,6 @@ public class HashtagDetailActivity extends Activity {
                     .add(R.id.hashtag_detail_container, fragment)
                     .commit();
         }
-
-        // If there's internet connection and tweets are too old
-        HashTagDB hashTagDbHandler = new HashTagDB(getApplicationContext());
-        HashTag hashTag = hashTagDbHandler.retrieve(hashID);
-
-        long lastUpdate = REFRESH_TIME + 1;
-        if (hashTag.getTweets().size() > 0) {
-            lastUpdate = new Date().getTime() - hashTag.getTweets().get(0).getCreated().getTime();
-        }
-
-        if (isNetworkAvailable() && lastUpdate > REFRESH_TIME) {
-            AskRefreshDialogFragment dialog = new AskRefreshDialogFragment();
-
-            Bundle args = new Bundle();
-            args.putInt(HashtagDetailFragment.ARG_ITEM_ID, hashID);
-            dialog.setArguments(args);
-
-            dialog.show(getFragmentManager(), "AskRefresh");
-        }
-
     }
 
     @Override
@@ -95,16 +74,5 @@ public class HashtagDetailActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Detect whether an internet connection exists
-     * @return True if the connection is possible
-     */
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

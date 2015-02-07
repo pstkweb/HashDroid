@@ -143,6 +143,9 @@ public class HashtagListFragment extends ListFragment {
                 addDialog.setTargetFragment(this, getTargetRequestCode());
                 addDialog.show(fm, "Add_hashtag");
                 return true;
+            case R.id.delete_hashtag:
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

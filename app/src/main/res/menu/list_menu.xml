@@ -4,4 +4,9 @@
         android:icon="@drawable/ic_add"
         android:title="@string/add_hashtag"
         android:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/delete_hashtag"
+        android:icon="@drawable/ic_remove"
+        android:title="@string/delete_hashtag"
+        android:showAsAction="ifRoom" />
 </menu>
