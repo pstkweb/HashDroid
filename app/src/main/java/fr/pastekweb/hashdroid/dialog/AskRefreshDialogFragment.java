@@ -11,12 +11,14 @@ import fr.pastekweb.hashdroid.R;
 import fr.pastekweb.hashdroid.db.HashTagDB;
 import fr.pastekweb.hashdroid.model.HashTag;
 import fr.pastekweb.hashdroid.tasks.SearchTweets;
+import fr.pastekweb.hashdroid.view.TweetAdapter;
 
 /**
  * Created by Thomas TRIBOULT on 04/02/15.
  */
 public class AskRefreshDialogFragment extends DialogFragment {
     private int hashId;
+    public TweetAdapter listAdapter;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -33,11 +35,8 @@ public class AskRefreshDialogFragment extends DialogFragment {
                     HashTag ht = hashtagDbHandler.retrieve(hashId);
 
                     // Search for that hashtag tweets with Twitter API
-                    SearchTweets api = new SearchTweets(getActivity().getApplicationContext());
+                    SearchTweets api = new SearchTweets(getActivity(), listAdapter);
                     api.execute(ht);
-
-                    HashtagDetailFragment fragment = (HashtagDetailFragment) getTargetFragment();
-                    fragment.refreshTweetsView();
                 }
             })
             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

@@ -107,7 +107,7 @@ public class HashtagListFragment extends ListFragment {
 
         // Search for that hashtag tweets with Twitter API if network connection is up
         if (isNetworkAvailable()) {
-            SearchTweets api = new SearchTweets(getActivity().getApplicationContext());
+            SearchTweets api = new SearchTweets(getActivity(), null);
             api.execute(hashTag);
         }
 

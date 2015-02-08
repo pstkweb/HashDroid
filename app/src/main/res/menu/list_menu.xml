@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/add_hashtag"
-        android:icon="@drawable/ic_add"
+        android:icon="@drawable/ic_add_light"
         android:title="@string/add_hashtag"
         android:showAsAction="ifRoom"/>
 
     <item android:id="@+id/delete_hashtag"
-        android:icon="@drawable/ic_remove"
+        android:icon="@drawable/ic_remove_light"
         android:title="@string/delete_hashtag"
         android:showAsAction="ifRoom" />
 </menu>

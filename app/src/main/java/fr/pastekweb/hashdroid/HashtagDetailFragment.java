@@ -5,12 +5,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.os.Debug;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -18,7 +16,7 @@ import java.util.Date;
 import fr.pastekweb.hashdroid.db.HashTagDB;
 import fr.pastekweb.hashdroid.dialog.AskRefreshDialogFragment;
 import fr.pastekweb.hashdroid.model.HashTag;
-import fr.pastekweb.hashdroid.model.Tweet;
+import fr.pastekweb.hashdroid.view.TweetAdapter;
 
 /**
  * A fragment representing a single Hashtag detail screen.
@@ -28,7 +26,7 @@ import fr.pastekweb.hashdroid.model.Tweet;
  */
 public class HashtagDetailFragment extends Fragment
 {
-    public static final long REFRESH_TIME = 180000;
+    public static final long REFRESH_TIME = 5; // Previously : 180000
 
     /**
      * The fragment argument representing the item ID that this fragment
@@ -46,6 +44,8 @@ public class HashtagDetailFragment extends Fragment
      */
     private View rootView;
 
+    private TweetAdapter tweetsAdapter;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -61,6 +61,12 @@ public class HashtagDetailFragment extends Fragment
             int htID = getArguments().getInt(ARG_ITEM_ID);
             HashTagDB htdb = new HashTagDB(getActivity().getApplicationContext());
             hashTag = htdb.retrieve(htID);
+
+            tweetsAdapter = new TweetAdapter(
+                this,
+                R.layout.fragment_tweet_detail,
+                hashTag.getTweets()
+            );
         }
     }
 
@@ -70,18 +76,22 @@ public class HashtagDetailFragment extends Fragment
         rootView = inflater.inflate(R.layout.fragment_hashtag_detail, container, false);
 
         if (hashTag != null) {
-          /*  ((TextView) rootView.findViewById(R.id.hashtag_detail)).setText(hashTag.toString());
+            // Set Tweets list adapter
+            ListView tweetsList = ((ListView) rootView.findViewById(R.id.tweets_list));
+            tweetsList.setAdapter(tweetsAdapter);
 
-            ViewGroup tweetsContainer = ((LinearLayout) rootView.findViewById(R.id.tweets_container));
-            for (Tweet tweet : hashTag.getTweets()) {
-                View tweetView = inflater.inflate(R.layout.fragment_tweet_detail, tweetsContainer, false);
+            // Set list header
+            ((TextView) rootView.findViewById(R.id.hashtag_detail)).setText(hashTag.toString());
+
+            /*for (Tweet tweet : hashTag.getTweets()) {
+                View tweetView = inflater.inflate(R.layout.fragment_tweet_detail, tweetsList, false);
                 ((TextView) tweetView.findViewById(R.id.tweet_author)).setText(tweet.getAuthor());
                 ((TextView) tweetView.findViewById(R.id.tweet_text)).setText(tweet.getText());
                 ((TextView) tweetView.findViewById(R.id.tweet_date)).setText(tweet.getCreated().toString());
                 tweetView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                tweetsContainer.addView(tweetView);
+                tweetsList.addView(tweetView);
             }*/
-            refreshTweetsView();
+            //refreshTweetsView();
         }
 
         // If there's internet connection and tweets are too old
@@ -92,8 +102,10 @@ public class HashtagDetailFragment extends Fragment
 
         if (isNetworkAvailable() && lastUpdate > REFRESH_TIME) {
             AskRefreshDialogFragment dialog = new AskRefreshDialogFragment();
+            dialog.listAdapter = tweetsAdapter;
             dialog.setTargetFragment(this, getTargetRequestCode());
             Bundle args = new Bundle();
+            args.putInt(ARG_ITEM_ID, hashTag.getId());
             dialog.setArguments(args);
 
             dialog.show(getFragmentManager(), "AskRefresh");
@@ -113,7 +125,7 @@ public class HashtagDetailFragment extends Fragment
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void refreshTweetsView()
+    /*public void refreshTweetsView()
     {
         ((TextView) rootView.findViewById(R.id.hashtag_detail)).setText(hashTag.toString());
 
@@ -126,5 +138,5 @@ public class HashtagDetailFragment extends Fragment
             tweetView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             tweetsContainer.addView(tweetView);
         }
-    }
+    }*/
 }
