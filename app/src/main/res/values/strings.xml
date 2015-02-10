@@ -4,11 +4,13 @@
     <string name="app_name">HashDroid</string>
     <string name="title_hashtag_detail">Hashtag Detail</string>
     <string name="cancel">Annuler</string>
+    <string name="delete">Supprimer</string>
     <string name="hashtag">Hashtag</string>
     <string name="add_hashtag">Ajouter un HashTag</string>
     <string name="ask_refresh">Mettre à jour la liste des derniers tweets?</string>
     <string name="refresh">Rafraichir</string>
     <string name="refresh_title">Mettre à jour</string>
-    <string name="delete_hashtag">Ajouter un HashTag</string>
+    <string name="delete_hashtag">Supprimer un HashTag</string>
+    <string name="delete_title">Supprimer les hashtag</string>
 
 </resources>

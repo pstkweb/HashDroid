@@ -39,11 +39,6 @@ public class HashtagDetailFragment extends Fragment
      */
     private HashTag hashTag;
 
-    /**
-     * The root view of the fragment
-     */
-    private View rootView;
-
     private TweetAdapter tweetsAdapter;
 
     /**
@@ -73,7 +68,7 @@ public class HashtagDetailFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_hashtag_detail, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_hashtag_detail, container, false);
 
         if (hashTag != null) {
             // Set Tweets list adapter
@@ -82,16 +77,6 @@ public class HashtagDetailFragment extends Fragment
 
             // Set list header
             ((TextView) rootView.findViewById(R.id.hashtag_detail)).setText(hashTag.toString());
-
-            /*for (Tweet tweet : hashTag.getTweets()) {
-                View tweetView = inflater.inflate(R.layout.fragment_tweet_detail, tweetsList, false);
-                ((TextView) tweetView.findViewById(R.id.tweet_author)).setText(tweet.getAuthor());
-                ((TextView) tweetView.findViewById(R.id.tweet_text)).setText(tweet.getText());
-                ((TextView) tweetView.findViewById(R.id.tweet_date)).setText(tweet.getCreated().toString());
-                tweetView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                tweetsList.addView(tweetView);
-            }*/
-            //refreshTweetsView();
         }
 
         // If there's internet connection and tweets are too old
@@ -124,19 +109,4 @@ public class HashtagDetailFragment extends Fragment
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
-    /*public void refreshTweetsView()
-    {
-        ((TextView) rootView.findViewById(R.id.hashtag_detail)).setText(hashTag.toString());
-
-        ViewGroup tweetsContainer = ((LinearLayout) rootView.findViewById(R.id.tweets_container));
-        for (Tweet tweet : hashTag.getTweets()) {
-            View tweetView = getActivity().getLayoutInflater().inflate(R.layout.fragment_tweet_detail, tweetsContainer, false);
-            ((TextView) tweetView.findViewById(R.id.tweet_author)).setText(tweet.getAuthor());
-            ((TextView) tweetView.findViewById(R.id.tweet_text)).setText(tweet.getText());
-            ((TextView) tweetView.findViewById(R.id.tweet_date)).setText(tweet.getCreated().toString());
-            tweetView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            tweetsContainer.addView(tweetView);
-        }
-    }*/
 }

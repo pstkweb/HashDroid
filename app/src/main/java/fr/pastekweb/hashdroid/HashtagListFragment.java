@@ -11,13 +11,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 
 import fr.pastekweb.hashdroid.db.HashTagDB;
 import fr.pastekweb.hashdroid.dialog.AddHashTagDialogFragment;
 import fr.pastekweb.hashdroid.model.HashTag;
 import fr.pastekweb.hashdroid.tasks.SearchTweets;
+import fr.pastekweb.hashdroid.view.HashtagAdapter;
 
 /**
  * A list fragment representing a list of Hashtags. This fragment
@@ -47,8 +48,15 @@ public class HashtagListFragment extends ListFragment {
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
+    /**
+     * The state of the edit mode
+     */
+    private boolean isInDeleteMode = false;
 
-    private ArrayAdapter<HashTag> hashTagsAdapter;
+    /**
+     * The hashtags list adapter
+     */
+    private HashtagAdapter hashTagsAdapter;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -83,36 +91,21 @@ public class HashtagListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setHasOptionsMenu(true);
 
         HashTagDB hdb = new HashTagDB(getActivity().getApplicationContext());
-        hashTagsAdapter = new ArrayAdapter<HashTag>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                hdb.retrieveAll()
-        );
-
+        hashTagsAdapter = new HashtagAdapter(this, R.layout.hashtag_list_item, hdb.retrieveAll());
         setListAdapter(hashTagsAdapter);
-    }
 
-    /**
-     * Add a hashtag to the list
-     * @param hashTag
-     */
-    public void addHashTag(HashTag hashTag)
-    {
-        HashTagDB hashTagDB = new HashTagDB(getActivity().getApplicationContext());
-        hashTagDB.create(hashTag);
-
-        // Search for that hashtag tweets with Twitter API if network connection is up
-        if (isNetworkAvailable()) {
-            SearchTweets api = new SearchTweets(getActivity(), null);
-            api.execute(hashTag);
-        }
-
-        hashTagsAdapter.add(hashTag);
-        hashTagsAdapter.notifyDataSetChanged();
+        // Listen to delete mode buttons
+        /*View buttonsLayout = getActivity().findViewById(R.id.buttons);
+        buttonsLayout.findViewById(R.id.hashtag_delete_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleDeleteMode();
+            }
+        });*/
     }
 
     @Override
@@ -144,6 +137,7 @@ public class HashtagListFragment extends ListFragment {
                 addDialog.show(fm, "Add_hashtag");
                 return true;
             case R.id.delete_hashtag:
+                toggleDeleteMode();
 
                 return true;
             default:
@@ -191,6 +185,25 @@ public class HashtagListFragment extends ListFragment {
     }
 
     /**
+     * Add a hashtag to the list
+     * @param hashTag The hashtag to append to the list
+     */
+    public void addHashTag(HashTag hashTag)
+    {
+        HashTagDB hashTagDB = new HashTagDB(getActivity().getApplicationContext());
+        hashTagDB.create(hashTag);
+
+        // Search for that hashtag tweets with Twitter API if network connection is up
+        if (isNetworkAvailable()) {
+            SearchTweets api = new SearchTweets(getActivity(), null);
+            api.execute(hashTag);
+        }
+
+        hashTagsAdapter.add(hashTag);
+        hashTagsAdapter.notifyDataSetChanged();
+    }
+
+    /**
      * Turns on activate-on-click mode. When this mode is on, list items will be
      * given the 'activated' state when touched.
      */
@@ -221,5 +234,26 @@ public class HashtagListFragment extends ListFragment {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    /**
+     * Toggle the hashtags delete mode
+     */
+    public void toggleDeleteMode() {
+        isInDeleteMode = !isInDeleteMode;
+
+        // Show/hide checkboxes
+        hashTagsAdapter.setDeleteMode(isInDeleteMode);
+
+        // Display/hide confirm buttons
+        if (isInDeleteMode) {
+            getActivity().findViewById(R.id.buttons).setVisibility(View.VISIBLE);
+        } else {
+            getActivity().findViewById(R.id.buttons).setVisibility(View.GONE);
+        }
+    }
+
+    public HashtagAdapter getAdapter() {
+        return hashTagsAdapter;
     }
 }

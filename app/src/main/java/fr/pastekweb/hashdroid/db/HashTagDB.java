@@ -29,7 +29,7 @@ public class HashTagDB
 
     /**
      * Initialize the connexion to the database
-     * @param context
+     * @param context The context where the database is accessed
      */
     public HashTagDB(Context context)
     {
@@ -124,7 +124,7 @@ public class HashTagDB
 
     /**
      * Retrieves all the hashtag
-     * @return
+     * @return The list of hashtags
      */
     public ArrayList<HashTag> retrieveAll()
     {
@@ -150,7 +150,7 @@ public class HashTagDB
 
     /**
      * Clear the list of tweets linked to the hashtag
-     * @param hashtag
+     * @param hashtag The hashtag to clear
      */
     public void emptyTweets(HashTag hashtag)
     {
@@ -159,6 +159,22 @@ public class HashTagDB
 
         SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
         db.delete(TweetDB.DB_TABLE, where, whereArgs);
+        db.close();
+    }
+
+    /**
+     * Remove a hashtag from the database
+     * @param hashtag The hashtag to remove
+     */
+    public void delete(HashTag hashtag)
+    {
+        emptyTweets(hashtag);
+
+        String where = HashTagDB.COL_ID+"=?";
+        String whereArgs[] = {String.valueOf(hashtag.getId())};
+
+        SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+        db.delete(HashTagDB.DB_TABLE, where, whereArgs);
         db.close();
     }
 

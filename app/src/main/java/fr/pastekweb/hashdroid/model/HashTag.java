@@ -31,6 +31,16 @@ public class HashTag
     private ArrayList<Tweet> tweets;
 
     /**
+     * Check if in delete mode
+     */
+    private boolean inDeleteMode;
+
+    /**
+     * Check if this hashtag is selected in the delete mode
+     */
+    private boolean isSelected;
+
+    /**
      * Creates a new instance of HashTag with a random id
      * @param libelle
      * @param create
@@ -64,6 +74,9 @@ public class HashTag
         this.libelle = libelle;
         this.created = created;
         this.tweets = new ArrayList<>(tweets);
+
+        this.inDeleteMode = false;
+        this.isSelected = false;
     }
 
     /**
@@ -80,6 +93,12 @@ public class HashTag
     {
         return libelle;
     }
+
+    /**
+     * Gets the HashTag's libelle with leading #
+     * @return The HashTags's libelle for display
+     */
+    public String getLibelleToRender() { return "#" + libelle; }
 
     /**
      * Gets the hashtag created date
@@ -109,6 +128,30 @@ public class HashTag
      * Empty the List of Tweets
      */
     public void emptyTweets() { this.tweets = new ArrayList<>(); }
+
+    /**
+     * Set the hashtag delete mode status (show/hide a checkbox in the list view)
+     * @param state The new status of the hashtag
+     */
+    public void setInDeleteMode(boolean state) { inDeleteMode = state; }
+
+    /**
+     * Get whether the hashtag is in delete mode
+     * @return True if the hashtag is in delete mode
+     */
+    public boolean isInDeleteMode() { return inDeleteMode; }
+
+    /**
+     * Set the hashtag selection status
+     * @param selected The new selection status of the hashtag
+     */
+    public void setIsSelected(boolean selected) { isSelected = selected; }
+
+    /**
+     * Get whether the hashtag is selected
+     * @return True if the hashtag is selected
+     */
+    public boolean isSelected() { return isSelected; }
 
     @Override
     public String toString(){ return "#"+libelle; }

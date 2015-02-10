@@ -1,10 +1,20 @@
 package fr.pastekweb.hashdroid;
 
+import android.app.AlertDialog;
+import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
+import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import fr.pastekweb.hashdroid.db.HashTagDB;
+import fr.pastekweb.hashdroid.model.HashTag;
+import fr.pastekweb.hashdroid.view.HashtagAdapter;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
@@ -98,5 +108,43 @@ public class HashtagListActivity extends Activity
             detailIntent.putExtra(HashtagDetailFragment.ARG_ITEM_ID, id);
             startActivity(detailIntent);
         }
+    }
+
+    public void cancelEditMode(View v) {
+        ((HashtagListFragment) getFragmentManager().findFragmentById(R.id.hashtag_list)).toggleDeleteMode();
+    }
+
+    public void confirmDelete(View v) {
+        new AlertDialog.Builder(this)
+            .setTitle(R.string.delete_title)
+            .setMessage("Êtes-vous sûr de vouloir supprimer ces hashtags?")
+            .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    HashtagListFragment fragment = (HashtagListFragment) getFragmentManager().findFragmentById(R.id.hashtag_list);
+                    HashtagAdapter adapter = fragment.getAdapter();
+                    HashTagDB htDb = new HashTagDB(getApplicationContext());
+
+                    // Delete hashtag in database
+                    List<HashTag> list = new ArrayList<HashTag>();
+                    for (HashTag ht : adapter.getList()) {
+                        if (ht.isSelected()) {
+                            htDb.delete(ht);
+
+                            list.add(ht);
+                        }
+                    }
+
+                    // Remove from adapter
+                    for (HashTag ht : list) {
+                        adapter.remove(ht);
+                    }
+
+                    // Leave delete mode
+                    fragment.toggleDeleteMode();
+                }
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
     }
 }
