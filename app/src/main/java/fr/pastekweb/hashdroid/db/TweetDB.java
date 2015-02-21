@@ -109,6 +109,7 @@ public class TweetDB
         );
 
         db.close();
+
         return new Tweet(id, author, text, created, hashTag);
     }
 }

@@ -1,18 +1,22 @@
 package fr.pastekweb.hashdroid;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+
+import java.util.List;
 
 import fr.pastekweb.hashdroid.db.HashTagDB;
 import fr.pastekweb.hashdroid.dialog.AddHashTagDialogFragment;
@@ -29,7 +33,7 @@ import fr.pastekweb.hashdroid.view.HashtagAdapter;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class HashtagListFragment extends ListFragment {
+public class HashtagListFragment extends Fragment {
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -57,6 +61,8 @@ public class HashtagListFragment extends ListFragment {
      * The hashtags list adapter
      */
     private HashtagAdapter hashTagsAdapter;
+
+    private ListView list;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -93,30 +99,28 @@ public class HashtagListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-
-        HashTagDB hdb = new HashTagDB(getActivity().getApplicationContext());
-        hashTagsAdapter = new HashtagAdapter(this, R.layout.hashtag_list_item, hdb.retrieveAll());
-        setListAdapter(hashTagsAdapter);
-
-        // Listen to delete mode buttons
-        /*View buttonsLayout = getActivity().findViewById(R.id.buttons);
-        buttonsLayout.findViewById(R.id.hashtag_delete_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleDeleteMode();
-            }
-        });*/
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_hashtags_list, container, false);
 
-        // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-        }
+        // Set HashTags list adapter
+        HashTagDB hdb = new HashTagDB(getActivity().getApplicationContext());
+        hashTagsAdapter = new HashtagAdapter(this, R.layout.hashtags_list_item, hdb.retrieveAll());
+
+        list = (ListView) rootView.findViewById(R.id.hashtags_list);
+        list.setAdapter(hashTagsAdapter);
+
+        // Set list event listener
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listActionCallbacks.onItemSelected(hashTagsAdapter.getItem(position).getId());
+            }
+        });
+
+        return rootView;
     }
 
     @Override
@@ -167,15 +171,6 @@ public class HashtagListFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
-
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        listActionCallbacks.onItemSelected(hashTagsAdapter.getItem(position).getId());
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mActivatedPosition != ListView.INVALID_POSITION) {
@@ -210,16 +205,16 @@ public class HashtagListFragment extends ListFragment {
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
+        list.setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
     }
 
     private void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
+            list.setItemChecked(mActivatedPosition, false);
         } else {
-            getListView().setItemChecked(position, true);
+            list.setItemChecked(position, true);
         }
 
         mActivatedPosition = position;

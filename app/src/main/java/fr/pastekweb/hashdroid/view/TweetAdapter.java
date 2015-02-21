@@ -35,7 +35,7 @@ public class TweetAdapter extends ArrayAdapter<Tweet> {
             convertView = fragment.getActivity().getLayoutInflater().inflate(layoutId, parent, false);
         }
 
-        ((TextView) convertView.findViewById(R.id.tweet_author)).setText(tweet.getAuthor());
+        ((TextView) convertView.findViewById(R.id.tweet_author)).setText(tweet.getAuthorToRender());
         ((TextView) convertView.findViewById(R.id.tweet_text)).setText(tweet.getText());
         ((TextView) convertView.findViewById(R.id.tweet_date)).setText(tweet.getCreated().toString());
 

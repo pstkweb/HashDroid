@@ -77,6 +77,12 @@ public class Tweet
     }
 
     /**
+     * Gets the author of the Tweet with a leading @
+     * @return The author name for display
+     */
+    public String getAuthorToRender() { return "@" + author; }
+
+    /**
      * Gets the text of the Tweet
      * @return The text
      */

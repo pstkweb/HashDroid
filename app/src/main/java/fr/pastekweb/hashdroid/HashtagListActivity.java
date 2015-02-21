@@ -1,12 +1,10 @@
 package fr.pastekweb.hashdroid;
 
 import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -65,7 +63,7 @@ public class HashtagListActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hashtag_list);
+        setContentView(R.layout.activity_hashtags_list);
 
         if (findViewById(R.id.hashtag_detail_container) != null) {
             // The detail container view will be present only in the
@@ -80,8 +78,6 @@ public class HashtagListActivity extends Activity
                     .findFragmentById(R.id.hashtag_list))
                     .setActivateOnItemClick(true);
         }
-
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
     /**

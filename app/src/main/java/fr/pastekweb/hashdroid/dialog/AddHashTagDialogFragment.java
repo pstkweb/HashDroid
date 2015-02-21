@@ -25,7 +25,7 @@ public class AddHashTagDialogFragment extends DialogFragment
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        final View view = inflater.inflate(R.layout.fragment_add_hashtag, null);
+        final View view = inflater.inflate(R.layout.dialog_add_hashtag, null);
         builder.setView(view)
             .setPositiveButton(R.string.add_hashtag, new DialogInterface.OnClickListener() {
                 @Override

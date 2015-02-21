@@ -14,8 +14,10 @@ import android.widget.TextView;
 import java.util.Date;
 
 import fr.pastekweb.hashdroid.db.HashTagDB;
+import fr.pastekweb.hashdroid.db.TweetDB;
 import fr.pastekweb.hashdroid.dialog.AskRefreshDialogFragment;
 import fr.pastekweb.hashdroid.model.HashTag;
+import fr.pastekweb.hashdroid.model.Tweet;
 import fr.pastekweb.hashdroid.view.TweetAdapter;
 
 /**
@@ -26,7 +28,7 @@ import fr.pastekweb.hashdroid.view.TweetAdapter;
  */
 public class HashtagDetailFragment extends Fragment
 {
-    public static final long REFRESH_TIME = 5; // Previously : 180000
+    public static final long REFRESH_TIME = 1800000; // In ms => 30 minutes
 
     /**
      * The fragment argument representing the item ID that this fragment
@@ -59,7 +61,7 @@ public class HashtagDetailFragment extends Fragment
 
             tweetsAdapter = new TweetAdapter(
                 this,
-                R.layout.fragment_tweet_detail,
+                R.layout.tweets_list_item,
                 hashTag.getTweets()
             );
         }
